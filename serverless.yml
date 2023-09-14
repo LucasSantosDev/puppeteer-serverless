@@ -1,0 +1,23 @@
+service: puppeteer-lambda
+
+frameworkVersion: "3"
+
+custom:
+  serverless-offline:
+    httpPort: 3090
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 1024
+  timeout: 90
+
+plugins:
+  - serverless-offline
+
+functions:
+  screenshot:
+    handler: handler.handler
+    events:
+      - eventBridge:
+          schedule: "cron(0/30 * * * ? *)"
