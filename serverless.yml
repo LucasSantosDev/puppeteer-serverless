@@ -10,14 +10,31 @@ provider:
   name: aws
   runtime: nodejs14.x
   memorySize: 1024
-  timeout: 90
+  timeout: 30
+  environment:
+    NODE_PATH: "./:/opt"
+
+layers:
+  Puppeteer:
+    path: layers/puppeteerLayer
+    compatibleRuntimes:
+      - nodejs14.x
+
+package:
+  exclude:
+    - layers/puppeteerLayer/**
 
 plugins:
   - serverless-offline
 
 functions:
   screenshot:
-    handler: handler.handler
+    handler: src/handler.handler
+    layers:
+      - { Ref: PuppeteerLambdaLayer }
     events:
+      - http:
+          path: screenshot
+          method: get
       - eventBridge:
           schedule: "cron(0/30 * * * ? *)"
